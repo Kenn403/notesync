@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoteSync — Portfolio Case Study</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --gold: #C8A96E;
+    --gold-dim: #8B6914;
+    --ink: #0A0A0F;
+    --paper: #F5F2EC;
+    --paper-dark: #EDE9E0;
+    --text: #1C1C28;
+    --muted: #6B6880;
+    --accent: #2D4B8E;
+    --accent-light: #EEF2FF;
+    --green: #2A6E4A;
+    --green-light: #EDF7F2;
+    --red: #8E2D2D;
+    --red-light: #FDF0F0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--ink);
+    border-bottom: 1px solid #1e1e2e;
+    padding: 0 48px;
+    height: 52px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-family: 'DM Serif Display', serif; color: var(--gold); font-size: 18px; letter-spacing: 0.04em; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { color: #666; text-decoration: none; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* SECTIONS */
+  .section { padding: 80px 48px; max-width: 1100px; margin: 0 auto; }
+  .section + .section { border-top: 1px solid var(--paper-dark); }
+
+  /* HERO */
+  .hero {
+    background: var(--ink);
+    color: #e8e4d9;
+    padding: 100px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 70% 50%, #1a1a3e 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 1100px; margin: 0 auto; position: relative; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #1a1a2e; border: 1px solid #2a2a4e;
+    color: var(--gold); font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; padding: 6px 14px; border-radius: 100px;
+    margin-bottom: 28px;
+  }
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 1.1;
+    color: #e8e4d9;
+    margin-bottom: 20px;
+  }
+  .hero-title em { color: var(--gold); font-style: italic; }
+  .hero-sub { font-size: 18px; color: #888; max-width: 560px; font-weight: 300; margin-bottom: 48px; line-height: 1.7; }
+  .hero-meta { display: flex; gap: 48px; }
+  .hero-meta-item label { display: block; font-size: 10px; color: #444; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 4px; }
+  .hero-meta-item span { font-size: 14px; color: #bbb; }
+
+  /* SECTION TITLES */
+  .section-eyebrow { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 12px; }
+  .section-title { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 4vw, 42px); line-height: 1.2; margin-bottom: 20px; color: var(--text); }
+  .section-title em { color: var(--gold-dim); font-style: italic; }
+  .section-lead { font-size: 16px; color: var(--muted); max-width: 640px; line-height: 1.8; margin-bottom: 48px; }
+
+  /* CARDS */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 32px; }
+  .card {
+    background: white; border: 1px solid #e8e4d8;
+    border-radius: 14px; padding: 28px;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); transform: translateY(-2px); }
+  .card-icon { font-size: 28px; margin-bottom: 14px; }
+  .card-title { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+  .card-text { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .card.accent { background: var(--ink); border-color: #2a2a4e; }
+  .card.accent .card-title { color: #e8e4d9; }
+  .card.accent .card-text { color: #888; }
+
+  /* TECH STACK TABLE */
+  .tech-table { width: 100%; border-collapse: collapse; margin-top: 32px; }
+  .tech-table th { text-align: left; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); padding: 10px 16px; border-bottom: 2px solid var(--paper-dark); }
+  .tech-table td { padding: 16px; border-bottom: 1px solid var(--paper-dark); font-size: 14px; vertical-align: top; }
+  .tech-table tr:last-child td { border-bottom: none; }
+  .tech-table tr:hover td { background: white; }
+  .tech-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 100px;
+    font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    font-weight: 500; margin-right: 4px;
+  }
+  .badge-blue { background: var(--accent-light); color: var(--accent); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-gold { background: #FEF9EC; color: var(--gold-dim); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+
+  /* ARCHITECTURE */
+  .arch-flow {
+    display: flex; align-items: center; gap: 0;
+    background: white; border: 1px solid #e8e4d8;
+    border-radius: 16px; overflow: hidden; margin-top: 32px;
+  }
+  .arch-step {
+    flex: 1; padding: 28px 24px; text-align: center;
+    border-right: 1px solid #e8e4d8; position: relative;
+  }
+  .arch-step:last-child { border-right: none; }
+  .arch-step::after {
+    content: '→';
+    position: absolute; right: -12px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px; color: var(--paper-dark);
+    z-index: 1;
+  }
+  .arch-step:last-child::after { display: none; }
+  .arch-step-num { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .arch-step-icon { font-size: 28px; margin-bottom: 8px; }
+  .arch-step-name { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .arch-step-tech { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  /* USER STORIES */
+  .story-list { list-style: none; margin-top: 24px; }
+  .story-list li {
+    display: flex; gap: 16px; padding: 18px 0;
+    border-bottom: 1px solid var(--paper-dark);
+    font-size: 14px;
+  }
+  .story-list li:last-child { border-bottom: none; }
+  .story-id { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold-dim); min-width: 60px; padding-top: 2px; }
+  .story-text { color: var(--text); line-height: 1.6; }
+  .story-text strong { color: var(--accent); }
+  .story-priority { margin-left: auto; align-self: flex-start; }
+  .prio { padding: 2px 10px; border-radius: 100px; font-size: 11px; font-weight: 500; }
+  .prio-p1 { background: #FEE2E2; color: #991B1B; }
+  .prio-p2 { background: #FEF3C7; color: #92400E; }
+  .prio-p3 { background: #D1FAE5; color: #065F46; }
+
+  /* MVPS ROADMAP */
+  .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px; }
+  .phase {
+    border-radius: 14px; padding: 28px;
+    border: 1px solid;
+  }
+  .phase-1 { background: #FEF9EC; border-color: #F5E6C0; }
+  .phase-2 { background: var(--accent-light); border-color: #C7D7F5; }
+  .phase-3 { background: var(--green-light); border-color: #B8E5CC; }
+  .phase-tag { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; margin-bottom: 12px; }
+  .phase-1 .phase-tag { color: var(--gold-dim); }
+  .phase-2 .phase-tag { color: var(--accent); }
+  .phase-3 .phase-tag { color: var(--green); }
+  .phase-title { font-weight: 700; font-size: 16px; margin-bottom: 16px; }
+  .phase-items { list-style: none; }
+  .phase-items li { font-size: 13px; color: var(--muted); padding: 5px 0; display: flex; gap: 8px; }
+  .phase-items li::before { content: '→'; color: inherit; opacity: 0.5; }
+
+  /* FIGMA SECTION */
+  .figma-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 32px; }
+  .figma-frame {
+    background: white; border: 1px solid #e8e4d8; border-radius: 14px;
+    overflow: hidden;
+  }
+  .figma-frame-header {
+    background: var(--ink); padding: 10px 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .figma-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .figma-frame-title { font-size: 11px; color: #666; font-family: 'JetBrains Mono', monospace; margin-left: auto; }
+  .figma-content { padding: 0; }
+
+  /* MINI SCREEN MOCKUPS */
+  .mini-screen {
+    background: #0a0a0f;
+    min-height: 240px;
+    display: flex; flex-direction: column;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+  }
+  .mini-topbar {
+    background: #0d0d18; border-bottom: 1px solid #1e1e2e;
+    padding: 8px 14px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .mini-logo { color: #C8A96E; font-size: 12px; font-weight: 600; }
+  .mini-tabs { display: flex; gap: 2px; }
+  .mini-tab { padding: 3px 10px; border-radius: 4px; font-size: 9px; color: #555; }
+  .mini-tab.active { background: #1a1a2e; color: #C8A96E; }
+  .mini-body { display: flex; flex: 1; }
+  .mini-sidebar { width: 100px; background: #0d0d18; border-right: 1px solid #1a1a2a; padding: 10px 8px; }
+  .mini-main { flex: 1; padding: 12px 14px; }
+  .mini-slide-item { padding: 6px 8px; border-radius: 6px; margin-bottom: 4px; cursor: pointer; }
+  .mini-slide-item.active { background: #1a1a2e; }
+  .mini-slide-emoji { font-size: 14px; display: block; margin-bottom: 2px; }
+  .mini-slide-text { font-size: 8px; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini-slide-text.gold { color: #C8A96E; }
+  .mini-section-label { font-size: 8px; color: #444; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .mini-transcript-item { display: flex; gap: 8px; margin-bottom: 8px; }
+  .mini-time { font-size: 8px; color: #555; min-width: 24px; padding-top: 1px; }
+  .mini-text-line { font-size: 9px; color: #9898a8; line-height: 1.5; }
+  .mini-ai-box { background: #1a1a0e; border: 1px solid #C8A96E33; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+  .mini-ai-label { font-size: 8px; color: #C8A96E; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .mini-ai-text { font-size: 9px; color: #aaa; line-height: 1.5; }
+  .mini-flashcard { background: #0f0f1e; border: 1px solid #2a2a5e; border-radius: 8px; padding: 10px; margin-bottom: 8px; }
+  .mini-fc-q { font-size: 8px; color: #C8A96E; margin-bottom: 4px; }
+  .mini-fc-text { font-size: 9px; color: #b0aa98; line-height: 1.4; }
+  .mini-record-area { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 24px; }
+  .mini-rec-btn { width: 48px; height: 48px; border-radius: 50%; background: #1a2a1a; border: 2px solid #3a6a3a; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .mini-rec-btn.recording { background: #2a1010; border-color: #e85555; }
+  .mini-waveform { display: flex; align-items: center; gap: 2px; height: 16px; }
+  .mini-bar { width: 2px; background: #C8A96E; border-radius: 1px; }
+  .mini-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #e85555; }
+
+  /* ANNOTATIONS */
+  .annotation {
+    background: #FFFBEB; border: 1px solid #FDE68A;
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 12px; color: #92400E;
+    display: flex; gap: 8px;
+  }
+  .annotation::before { content: '💡'; }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--ink); color: #c8c4b8;
+    border-radius: 12px; padding: 24px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; line-height: 1.8;
+    overflow-x: auto; margin-top: 16px;
+  }
+  .code-block .kw { color: #c792ea; }
+  .code-block .str { color: #c3e88d; }
+  .code-block .fn { color: #82aaff; }
+  .code-block .cm { color: #546e7a; }
+  .code-block .num { color: #f78c6c; }
+
+  /* DECISIONS */
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .decision-card {
+    background: white; border: 1px solid #e8e4d8;
+    border-radius: 12px; padding: 22px;
+  }
+  .decision-vs { font-size: 11px; color: var(--muted); margin-bottom: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .decision-chosen { font-weight: 700; font-size: 15px; margin-bottom: 6px; color: var(--green); }
+  .decision-rejected { font-size: 13px; color: var(--muted); text-decoration: line-through; margin-bottom: 10px; }
+  .decision-reason { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .decision-reason strong { color: var(--text); }
+
+  /* METRICS */
+  .metrics-row { display: flex; gap: 20px; margin-top: 32px; }
+  .metric-box {
+    flex: 1; background: white; border: 1px solid #e8e4d8;
+    border-radius: 14px; padding: 28px 24px; text-align: center;
+  }
+  .metric-num { font-family: 'DM Serif Display', serif; font-size: 48px; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+  .metric-label { font-size: 12px; color: var(--muted); }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink); color: #555;
+    text-align: center; padding: 40px 48px;
+    font-size: 13px; letter-spacing: 0.04em;
+  }
+  footer span { color: var(--gold); }
+
+  @media (max-width: 768px) {
+    .section { padding: 48px 24px; }
+    .hero { padding: 64px 24px; }
+    nav { padding: 0 24px; }
+    .roadmap { grid-template-columns: 1fr; }
+    .figma-grid { grid-template-columns: 1fr; }
+    .decision-grid { grid-template-columns: 1fr; }
+    .metrics-row { flex-direction: column; }
+    .arch-flow { flex-direction: column; }
+    .arch-step::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">◈ NoteSync</div>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#design">Design</a>
+    <a href="#tech">Tech Stack</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">◈ Portfolio Case Study</div>
+    <h1 class="hero-title">NoteSync<br><em>for Accessibility</em></h1>
+    <p class="hero-sub">An AI-powered lecture companion that transcribes audio, syncs to slides, and generates study materials — designed for students with disabilities who rely on note-taking services.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><label>Role</label><span>Product Manager · Full-Stack Engineer</span></div>
+      <div class="hero-meta-item"><label>Domain</label><span>EdTech · Accessibility</span></div>
+      <div class="hero-meta-item"><label>Stack</label><span>React · Node.js · Deepgram · Claude AI</span></div>
+      <div class="hero-meta-item"><label>Stage</label><span>MVP Concept → Working Prototype</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section" id="overview">
+  <div class="section-eyebrow">01 — The Problem</div>
+  <h2 class="section-title">Students can't control the<br><em>quality of their own notes</em></h2>
+  <p class="section-lead">Colleges hire volunteer note-takers to serve students with disabilities. But the system is fragile — note-takers are inconsistent, late, or absent. Students receive their notes hours after class, too late to ask questions while the material is fresh.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">⏱️</div>
+      <div class="card-title">Delayed delivery</div>
+      <div class="card-text">Notes arrive hours or days after class, breaking the learning loop when retention and questions are most valuable.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎲</div>
+      <div class="card-title">Inconsistent quality</div>
+      <div class="card-text">Every note-taker has different writing habits, speed, and comprehension. Students have no way to verify what was missed.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔗</div>
+      <div class="card-title">No context anchoring</div>
+      <div class="card-text">Notes are disconnected from the slide content. Students can't trace "which slide was this about?" when reviewing.</div>
+    </div>
+    <div class="card accent">
+      <div class="card-icon">✦</div>
+      <div class="card-title" style="color:#c8a96e">The insight</div>
+      <div class="card-text">The job-to-be-done isn't "get notes." It's <em style="color:#c8a96e">"understand what happened in class, on my own terms, at my own pace."</em></div>
+    </div>
+  </div>
+</section>
+
+<!-- USER STORIES -->
+<section class="section">
+  <div class="section-eyebrow">02 — User Stories</div>
+  <h2 class="section-title">Designed around<br><em>real student needs</em></h2>
+  <p class="section-lead">Primary persona: a university student with ADHD or a hearing impairment, enrolled in lecture-based courses, who currently relies on accessibility services for note support.</p>
+
+  <ul class="story-list">
+    <li>
+      <span class="story-id">US-01</span>
+      <span class="story-text">As a <strong>student with ADHD</strong>, I want live transcription during class so that I can focus on listening without worrying about missing content.</span>
+      <span class="story-priority"><span class="prio prio-p1">P1</span></span>
+    </li>
+    <li>
+      <span class="story-id">US-02</span>
+      <span class="story-text">As a <strong>student with a hearing impairment</strong>, I want a synchronized text stream tied to each slide so that I can follow along in real time.</span>
+      <span class="story-priority"><span class="prio prio-p1">P1</span></span>
+    </li>
+    <li>
+      <span class="story-id">US-03</span>
+      <span class="story-text">As a <strong>student reviewing before an exam</strong>, I want AI-generated summaries per slide so that I can quickly identify key concepts without re-reading the full transcript.</span>
+      <span class="story-priority"><span class="prio prio-p1">P1</span></span>
+    </li>
+    <li>
+      <span class="story-id">US-04</span>
+      <span class="story-text">As a <strong>student uploading lecture slides</strong>, I want them auto-matched to transcript timestamps so that every piece of content has spatial context.</span>
+      <span class="story-priority"><span class="prio prio-p2">P2</span></span>
+    </li>
+    <li>
+      <span class="story-id">US-05</span>
+      <span class="story-text">As a <strong>student studying independently</strong>, I want auto-generated flashcards from lecture content so that I can prepare for exams without building my own study materials from scratch.</span>
+      <span class="story-priority"><span class="prio prio-p2">P2</span></span>
+    </li>
+    <li>
+      <span class="story-id">US-06</span>
+      <span class="story-text">As a <strong>student with slow processing speed</strong>, I want an AI chat interface I can ask questions about any lecture moment so that I can clarify without having to re-attend office hours.</span>
+      <span class="story-priority"><span class="prio prio-p3">P3</span></span>
+    </li>
+    <li>
+      <span class="story-id">US-07</span>
+      <span class="story-text">As a <strong>student in multiple courses</strong>, I want a dashboard of all my recordings organized by course and date so that I can navigate my lecture history easily.</span>
+      <span class="story-priority"><span class="prio prio-p3">P3</span></span>
+    </li>
+  </ul>
+</section>
+
+<!-- FIGMA MOCKUPS -->
+<section class="section" id="design">
+  <div class="section-eyebrow">03 — UI Design</div>
+  <h2 class="section-title">Four core screens,<br><em>one unified experience</em></h2>
+  <p class="section-lead">The design language uses a dark, focused environment that reduces cognitive load during class. Gold accents draw attention to AI-generated content. Typography is large and legible for low-vision accessibility.</p>
+
+  <div class="figma-grid">
+
+    <!-- Screen 1: Record -->
+    <div class="figma-frame">
+      <div class="figma-frame-header">
+        <div class="figma-dot" style="background:#FF5F57"></div>
+        <div class="figma-dot" style="background:#FEBC2E"></div>
+        <div class="figma-dot" style="background:#28C840"></div>
+        <span class="figma-frame-title">Screen 1 — Record / Live Class</span>
+      </div>
+      <div class="mini-screen">
+        <div class="mini-topbar">
+          <span class="mini-logo">◈ NoteSync</span>
+          <div class="mini-tabs">
+            <div class="mini-tab active">📡 Record</div>
+            <div class="mini-tab">📖 Review</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px">
+            <div class="mini-status-dot"></div>
+            <span style="color:#e85555;font-size:9px">0:47</span>
+          </div>
+        </div>
+        <div class="mini-body">
+          <div class="mini-sidebar">
+            <div class="mini-section-label">Slides</div>
+            <div class="mini-slide-item active">
+              <span class="mini-slide-emoji">🧠</span>
+              <div class="mini-slide-text gold">Introduction</div>
+            </div>
+            <div class="mini-slide-item">
+              <span class="mini-slide-emoji">🔗</span>
+              <div class="mini-slide-text">Hebbian Theory</div>
+            </div>
+            <div class="mini-slide-item">
+              <span class="mini-slide-emoji">⚡</span>
+              <div class="mini-slide-text">Synaptic...</div>
+            </div>
+            <div style="margin-top:14px">
+              <div class="mini-section-label">Mic</div>
+              <div class="mini-record-area" style="padding:10px 6px">
+                <div class="mini-rec-btn recording">⏹</div>
+                <div class="mini-waveform">
+                  <div class="mini-bar" style="height:4px"></div>
+                  <div class="mini-bar" style="height:12px"></div>
+                  <div class="mini-bar" style="height:8px"></div>
+                  <div class="mini-bar" style="height:16px"></div>
+                  <div class="mini-bar" style="height:6px"></div>
+                  <div class="mini-bar" style="height:10px"></div>
+                  <div class="mini-bar" style="height:14px"></div>
+                  <div class="mini-bar" style="height:4px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mini-main">
+            <div class="mini-section-label">Slide 1 — Introduction to Neuroplasticity</div>
+            <div style="background:#0f0f1e;border:1px solid #2a2a4e;border-radius:8px;padding:16px;text-align:center;margin-bottom:12px;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+              <div style="font-size:24px">🧠</div>
+              <div style="font-size:10px;color:#C8A96E">Introduction to Neuroplasticity</div>
+              <div style="font-size:8px;color:#444">PSYCH 302 · Lecture 5</div>
+              <div style="background:#e85555;color:white;font-size:7px;padding:2px 6px;border-radius:3px;margin-top:4px">● LIVE</div>
+            </div>
+            <div class="mini-section-label">Live Transcript</div>
+            <div class="mini-transcript-item">
+              <div class="mini-time">0:12</div>
+              <div class="mini-text-line">Good morning everyone, today we're exploring neuroplasticity — the brain's ability to reorganize...</div>
+            </div>
+            <div class="mini-transcript-item">
+              <div class="mini-time">—</div>
+              <div style="display:flex;gap:3px;padding-top:4px">
+                <div style="width:4px;height:4px;border-radius:50%;background:#C8A96E"></div>
+                <div style="width:4px;height:4px;border-radius:50%;background:#C8A96E;opacity:0.6"></div>
+                <div style="width:4px;height:4px;border-radius:50%;background:#C8A96E;opacity:0.3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;background:white;border-top:1px solid #f0ece4">
+        <div class="annotation">Slide advances manually or via AI detection of professor's screen share</div>
+      </div>
+    </div>
+
+    <!-- Screen 2: Review Summary -->
+    <div class="figma-frame">
+      <div class="figma-frame-header">
+        <div class="figma-dot" style="background:#FF5F57"></div>
+        <div class="figma-dot" style="background:#FEBC2E"></div>
+        <div class="figma-dot" style="background:#28C840"></div>
+        <span class="figma-frame-title">Screen 2 — Review / AI Summary</span>
+      </div>
+      <div class="mini-screen">
+        <div class="mini-topbar">
+          <span class="mini-logo">◈ NoteSync</span>
+          <div class="mini-tabs">
+            <div class="mini-tab">📡 Record</div>
+            <div class="mini-tab active">📖 Review</div>
+          </div>
+        </div>
+        <div class="mini-body">
+          <div class="mini-sidebar">
+            <div class="mini-section-label">Slides</div>
+            <div class="mini-slide-item active">
+              <span class="mini-slide-emoji">🔗</span>
+              <div class="mini-slide-text gold">Hebbian Theory</div>
+            </div>
+            <div class="mini-slide-item">
+              <span class="mini-slide-emoji">🧠</span>
+              <div class="mini-slide-text">Introduction</div>
+            </div>
+            <div class="mini-slide-item">
+              <span class="mini-slide-emoji">⚡</span>
+              <div class="mini-slide-text">Synaptic...</div>
+            </div>
+            <div class="mini-slide-item">
+              <span class="mini-slide-emoji">📈</span>
+              <div class="mini-slide-text">LTP</div>
+            </div>
+          </div>
+          <div class="mini-main">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div>
+                <div class="mini-section-label">Slide 2</div>
+                <div style="font-size:11px;color:#C8A96E;font-weight:600">Hebbian Learning Theory</div>
+              </div>
+              <div style="display:flex;gap:4px">
+                <div style="background:#1a1a2e;border:1px solid #2a2a4e;color:#888;padding:3px 8px;border-radius:4px;font-size:8px">Summary</div>
+                <div style="background:#C8A96E22;border:1px solid #C8A96E44;color:#C8A96E;padding:3px 8px;border-radius:4px;font-size:8px">Transcript</div>
+              </div>
+            </div>
+            <div class="mini-ai-box">
+              <div class="mini-ai-label">✦ AI SUMMARY</div>
+              <div class="mini-ai-text">Hebb's Rule (1949): neurons that fire together, wire together. Repeated co-activation strengthens synaptic connections — the biological basis of learning.</div>
+            </div>
+            <div class="mini-section-label">Key Points</div>
+            <div style="background:#0f0f18;border:1px solid #1a1a2a;border-radius:6px;padding:8px;margin-bottom:6px;display:flex;gap:6px">
+              <div style="width:14px;height:14px;border-radius:50%;border:1px solid #2a2a4e;display:flex;align-items:center;justify-content:center;font-size:7px;color:#555;flex-shrink:0">1</div>
+              <div class="mini-ai-text">Think of it like a path through a forest — the more you walk it, the clearer it becomes.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;background:white;border-top:1px solid #f0ece4">
+        <div class="annotation">AI summary is one Claude API call with slide transcript as context</div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Flashcards -->
+    <div class="figma-frame">
+      <div class="figma-frame-header">
+        <div class="figma-dot" style="background:#FF5F57"></div>
+        <div class="figma-dot" style="background:#FEBC2E"></div>
+        <div class="figma-dot" style="background:#28C840"></div>
+        <span class="figma-frame-title">Screen 3 — Review / Flashcards</span>
+      </div>
+      <div class="mini-screen">
+        <div class="mini-topbar">
+          <span class="mini-logo">◈ NoteSync</span>
+          <div class="mini-tabs">
+            <div class="mini-tab">📡 Record</div>
+            <div class="mini-tab active">📖 Review</div>
+          </div>
+        </div>
+        <div class="mini-body">
+          <div class="mini-sidebar">
+            <div class="mini-section-label">Slides</div>
+            <div class="mini-slide-item active">
+              <span class="mini-slide-emoji">📈</span>
+              <div class="mini-slide-text gold">LTP</div>
+            </div>
+            <div class="mini-slide-item">
+              <span class="mini-slide-emoji">🧠</span>
+              <div class="mini-slide-text">Introduction</div>
+            </div>
+            <div class="mini-slide-item">
+              <span class="mini-slide-emoji">🔗</span>
+              <div class="mini-slide-text">Hebbian</div>
+            </div>
+          </div>
+          <div class="mini-main">
+            <div style="margin-bottom:10px">
+              <div class="mini-section-label">Slide 4</div>
+              <div style="font-size:11px;color:#C8A96E;font-weight:600;margin-bottom:6px">Long-Term Potentiation</div>
+              <div style="display:flex;gap:2px;border-bottom:1px solid #1a1a2a;padding-bottom:6px;margin-bottom:8px">
+                <div style="padding:3px 8px;font-size:8px;color:#555;border-bottom:1px solid transparent">Summary</div>
+                <div style="padding:3px 8px;font-size:8px;color:#555;border-bottom:1px solid transparent">Transcript</div>
+                <div style="padding:3px 8px;font-size:8px;color:#C8A96E;border-bottom:2px solid #C8A96E">Flashcards</div>
+              </div>
+              <div style="font-size:9px;color:#666;margin-bottom:8px">AI-generated · tap to flip</div>
+            </div>
+            <div class="mini-flashcard">
+              <div class="mini-fc-q">QUESTION</div>
+              <div class="mini-fc-text">What is long-term potentiation (LTP)?</div>
+              <div style="font-size:8px;color:#333;margin-top:6px">tap to reveal →</div>
+            </div>
+            <div class="mini-flashcard" style="background:#0a1a0a;border-color:#3a6a3a44">
+              <div class="mini-fc-q" style="color:#5aba5a">ANSWER</div>
+              <div class="mini-fc-text">LTP is the key cellular mechanism underlying memory. NMDA receptors require simultaneous pre + post-synaptic firing.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;background:white;border-top:1px solid #f0ece4">
+        <div class="annotation">Flashcards generated with spaced repetition algorithm (SM-2) for optimal review scheduling</div>
+      </div>
+    </div>
+
+    <!-- Screen 4: Dashboard -->
+    <div class="figma-frame">
+      <div class="figma-frame-header">
+        <div class="figma-dot" style="background:#FF5F57"></div>
+        <div class="figma-dot" style="background:#FEBC2E"></div>
+        <div class="figma-dot" style="background:#28C840"></div>
+        <span class="figma-frame-title">Screen 4 — Lecture Dashboard</span>
+      </div>
+      <div class="mini-screen" style="min-height:280px">
+        <div class="mini-topbar">
+          <span class="mini-logo">◈ NoteSync</span>
+          <div style="font-size:9px;color:#555">Spring 2026</div>
+        </div>
+        <div style="padding:14px 16px">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+            <div style="background:#1a1a2e;border:1px solid #2a2a4e;border-radius:8px;padding:10px;text-align:center">
+              <div style="font-size:20px;color:#C8A96E;font-weight:700;font-family:serif">14</div>
+              <div style="font-size:8px;color:#555">Lectures</div>
+            </div>
+            <div style="background:#1a1a2e;border:1px solid #2a2a4e;border-radius:8px;padding:10px;text-align:center">
+              <div style="font-size:20px;color:#5aba5a;font-weight:700;font-family:serif">3</div>
+              <div style="font-size:8px;color:#555">Courses</div>
+            </div>
+            <div style="background:#1a1a2e;border:1px solid #2a2a4e;border-radius:8px;padding:10px;text-align:center">
+              <div style="font-size:20px;color:#82aaff;font-weight:700;font-family:serif">89</div>
+              <div style="font-size:8px;color:#555">Flashcards</div>
+            </div>
+          </div>
+          <div class="mini-section-label">Recent Lectures</div>
+          <div style="background:#0f0f18;border:1px solid #1a1a2a;border-radius:8px;padding:8px 10px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:9px;color:#C8A96E;font-weight:600">PSYCH 302 — Lecture 5</div>
+              <div style="font-size:8px;color:#555;margin-top:2px">Neuroplasticity · 47 min · 5 slides</div>
+            </div>
+            <div style="font-size:8px;color:#C8A96E;background:#1a1a0e;border:1px solid #C8A96E33;padding:3px 8px;border-radius:4px">Review →</div>
+          </div>
+          <div style="background:#0f0f18;border:1px solid #1a1a2a;border-radius:8px;padding:8px 10px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:9px;color:#888">CS 201 — Lecture 12</div>
+              <div style="font-size:8px;color:#555;margin-top:2px">Data Structures · 52 min · 8 slides</div>
+            </div>
+            <div style="font-size:8px;color:#666;padding:3px 8px">Review →</div>
+          </div>
+          <div style="background:#0f0f18;border:1px solid #1a1a2a;border-radius:8px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:9px;color:#888">ECON 101 — Lecture 7</div>
+              <div style="font-size:8px;color:#555;margin-top:2px">Supply & Demand · 38 min · 4 slides</div>
+            </div>
+            <div style="font-size:8px;color:#666;padding:3px 8px">Review →</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;background:white;border-top:1px solid #f0ece4">
+        <div class="annotation">Dashboard aggregates sessions by course using metadata from PDF filename + calendar sync (P3)</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="section" id="tech">
+  <div class="section-eyebrow">04 — Technology Stack</div>
+  <h2 class="section-title">Every framework<br><em>chosen deliberately</em></h2>
+  <p class="section-lead">No technology was chosen by default. Each decision has a reason tied directly to user needs, performance constraints, or accessibility requirements.</p>
+
+  <table class="tech-table">
+    <thead>
+      <tr>
+        <th>Layer</th>
+        <th>Technology</th>
+        <th>Why This One</th>
+        <th>Alternatives Considered</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Frontend Framework</strong></td>
+        <td><span class="tech-badge badge-blue">React 18</span></td>
+        <td>Component-based architecture maps perfectly to the slide panel + transcript panel + tab system. React's concurrent rendering handles live transcript updates without blocking the UI. Largest ecosystem for accessibility tooling (react-aria).</td>
+        <td>Vue 3 (smaller ecosystem), Svelte (less hiring pool), Next.js (overkill for client-side app)</td>
+      </tr>
+      <tr>
+        <td><strong>Styling</strong></td>
+        <td><span class="tech-badge badge-blue">Tailwind CSS</span></td>
+        <td>Rapid iteration on design system with consistent spacing and color tokens. Dark mode support out of the box. Utility classes eliminate specificity wars in a component-heavy app.</td>
+        <td>CSS Modules (verbose), Styled Components (runtime overhead), plain CSS (no system)</td>
+      </tr>
+      <tr>
+        <td><strong>Live Transcription</strong></td>
+        <td><span class="tech-badge badge-green">Deepgram API</span></td>
+        <td>Sub-300ms latency via WebSocket streaming — critical for live class use. Superior accuracy for academic vocabulary. Built-in speaker diarization to separate professor from student questions. ~$0.0059/min cost is viable for student usage.</td>
+        <td>OpenAI Whisper (no streaming, batch only), AssemblyAI (higher latency), Web Speech API (no offline, browser-only)</td>
+      </tr>
+      <tr>
+        <td><strong>AI Summarization</strong></td>
+        <td><span class="tech-badge badge-gold">Claude API</span> <span class="tech-badge badge-gold">claude-sonnet-4</span></td>
+        <td>Best-in-class performance on structured educational content. Controllable output format (JSON) for summary + flashcard generation. Large context window handles full lecture transcripts. Anthropic's safety focus aligns with student-facing product.</td>
+        <td>GPT-4o (comparable but pricier at scale), Gemini (weaker structured output), on-device models (quality tradeoff)</td>
+      </tr>
+      <tr>
+        <td><strong>PDF Processing</strong></td>
+        <td><span class="tech-badge badge-blue">PDF.js</span> <span class="tech-badge badge-blue">pdf-lib</span></td>
+        <td>PDF.js renders slide thumbnails directly in browser — no server round trip for upload preview. pdf-lib handles text extraction and page metadata for slide-to-timestamp anchoring.</td>
+        <td>Server-side pdfminer (latency), iFrame embed (no programmatic access), PPT.js (PPTX only)</td>
+      </tr>
+      <tr>
+        <td><strong>Backend / API</strong></td>
+        <td><span class="tech-badge badge-green">Node.js</span> <span class="tech-badge badge-green">Express</span></td>
+        <td>JavaScript across the stack reduces context switching. Event-loop model handles concurrent WebSocket connections for multi-user transcription sessions. Fast to prototype with vast middleware ecosystem.</td>
+        <td>Python/FastAPI (good but separate language), Go (performance overkill for MVP), Serverless (WebSocket complexity)</td>
+      </tr>
+      <tr>
+        <td><strong>Real-time</strong></td>
+        <td><span class="tech-badge badge-blue">Socket.io</span></td>
+        <td>Bidirectional streaming for live transcript push to client. Automatic reconnection on network drops (critical during class). Room-based architecture enables future multi-device sync.</td>
+        <td>Native WebSockets (manual reconnect logic), Server-Sent Events (unidirectional), polling (unacceptable latency)</td>
+      </tr>
+      <tr>
+        <td><strong>Database</strong></td>
+        <td><span class="tech-badge badge-green">PostgreSQL</span> <span class="tech-badge badge-green">Prisma</span></td>
+        <td>Relational model fits the data perfectly: Users → Courses → Sessions → Slides → Transcript Segments. Prisma ORM provides type-safe queries. PostgreSQL's full-text search enables lecture search without Elasticsearch.</td>
+        <td>MongoDB (less structure, no joins), Firebase (vendor lock-in), SQLite (not production-scalable)</td>
+      </tr>
+      <tr>
+        <td><strong>File Storage</strong></td>
+        <td><span class="tech-badge badge-gold">AWS S3</span></td>
+        <td>Lecture audio files (avg 50–200MB) need durable cloud storage with signed URL access. S3 lifecycle policies auto-archive old sessions. Presigned URLs let clients upload directly — bypassing server bandwidth costs.</td>
+        <td>Cloudinary (media focus, extra cost), local filesystem (not scalable), GCS (comparable, weaker US ecosystem)</td>
+      </tr>
+      <tr>
+        <td><strong>Auth</strong></td>
+        <td><span class="tech-badge badge-blue">Auth0</span></td>
+        <td>University SSO integration (SAML/OIDC) is table-stakes for institutional adoption. Auth0 handles SSO, MFA, and RBAC out of the box. Reduces FERPA compliance risk by offloading auth to a SOC2-certified provider.</td>
+        <td>NextAuth (React-only), Firebase Auth (no SAML), custom JWT (security risk, maintenance burden)</td>
+      </tr>
+      <tr>
+        <td><strong>Deployment</strong></td>
+        <td><span class="tech-badge badge-green">Vercel</span> <span class="tech-badge badge-gold">Railway</span></td>
+        <td>Vercel for the React frontend — instant deploys, edge CDN, zero config. Railway for the Node.js backend — WebSocket support (Vercel doesn't support persistent connections), Postgres addon, environment management.</td>
+        <td>AWS (too complex for MVP), Heroku (deprecated free tier), DigitalOcean (manual scaling)</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="section" id="architecture">
+  <div class="section-eyebrow">05 — System Architecture</div>
+  <h2 class="section-title">Data flows through<br><em>four key stages</em></h2>
+  <p class="section-lead">The architecture is designed for low latency in the capture phase and high intelligence in the review phase. Audio is never stored raw on the client — it streams directly to Deepgram via the backend proxy.</p>
+
+  <div class="arch-flow">
+    <div class="arch-step">
+      <div class="arch-step-num">Input</div>
+      <div class="arch-step-icon">🎙</div>
+      <div class="arch-step-name">Audio Capture</div>
+      <div class="arch-step-tech">Web Audio API<br>MediaRecorder</div>
+    </div>
+    <div class="arch-step">
+      <div class="arch-step-num">Stream</div>
+      <div class="arch-step-icon">⚡</div>
+      <div class="arch-step-name">Live Transcription</div>
+      <div class="arch-step-tech">Deepgram WS<br>Socket.io</div>
+    </div>
+    <div class="arch-step">
+      <div class="arch-step-num">Sync</div>
+      <div class="arch-step-icon">🔗</div>
+      <div class="arch-step-name">Slide Anchoring</div>
+      <div class="arch-step-tech">PDF.js<br>Timestamp map</div>
+    </div>
+    <div class="arch-step">
+      <div class="arch-step-num">Enrich</div>
+      <div class="arch-step-icon">✦</div>
+      <div class="arch-step-name">AI Processing</div>
+      <div class="arch-step-tech">Claude API<br>Summaries + Cards</div>
+    </div>
+    <div class="arch-step">
+      <div class="arch-step-num">Deliver</div>
+      <div class="arch-step-icon">📖</div>
+      <div class="arch-step-name">Review Dashboard</div>
+      <div class="arch-step-tech">React UI<br>PostgreSQL</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 32px">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em">Key API Interaction — Transcription Stream</p>
+    <div class="code-block">
+<span class="cm">// Client: capture mic audio and stream via Socket.io</span>
+<span class="kw">const</span> stream = <span class="kw">await</span> navigator.mediaDevices.<span class="fn">getUserMedia</span>({ audio: <span class="kw">true</span> });
+<span class="kw">const</span> recorder = <span class="kw">new</span> <span class="fn">MediaRecorder</span>(stream, { mimeType: <span class="str">'audio/webm;codecs=opus'</span> });
+
+recorder.ondataavailable = (e) => {
+  socket.<span class="fn">emit</span>(<span class="str">'audio-chunk'</span>, e.data);  <span class="cm">// Stream to backend</span>
+};
+
+<span class="cm">// Receive live transcript words back from server</span>
+socket.<span class="fn">on</span>(<span class="str">'transcript-update'</span>, ({ text, timestamp, isFinal }) => {
+  <span class="kw">if</span> (isFinal) <span class="fn">appendToSlide</span>(activeSlide, { text, timestamp });
+  <span class="kw">else</span> <span class="fn">updateInterimDisplay</span>(text);  <span class="cm">// Show in-progress words</span>
+});
+
+<span class="cm">// Server: proxy audio to Deepgram via WebSocket</span>
+<span class="kw">const</span> dgSocket = deepgram.<span class="fn">transcription</span>.<span class="fn">live</span>({
+  punctuate: <span class="kw">true</span>, diarize: <span class="kw">true</span>,
+  model: <span class="str">'nova-2'</span>, language: <span class="str">'en-US'</span>
+});
+
+dgSocket.<span class="fn">on</span>(<span class="str">'transcriptReceived'</span>, (data) => {
+  <span class="kw">const</span> result = data.channel.alternatives[<span class="num">0</span>];
+  clientSocket.<span class="fn">emit</span>(<span class="str">'transcript-update'</span>, {
+    text: result.transcript,
+    timestamp: data.start,
+    isFinal: data.is_final
+  });
+});
+    </div>
+  </div>
+
+  <div style="margin-top: 32px">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em">Key API Interaction — AI Summary Generation</p>
+    <div class="code-block">
+<span class="cm">// POST /api/sessions/:id/summarize</span>
+<span class="cm">// Called once after recording ends (or on-demand in review)</span>
+
+<span class="kw">const</span> <span class="fn">generateSlideSummaries</span> = <span class="kw">async</span> (sessionId) => {
+  <span class="kw">const</span> session = <span class="kw">await</span> db.session.<span class="fn">findUnique</span>({
+    where: { id: sessionId },
+    include: { slides: { include: { transcriptSegments: <span class="kw">true</span> } } }
+  });
+
+  <span class="kw">const</span> summaries = <span class="kw">await</span> Promise.<span class="fn">all</span>(session.slides.<span class="fn">map</span>(<span class="kw">async</span> (slide) => {
+    <span class="kw">const</span> transcript = slide.transcriptSegments
+      .<span class="fn">map</span>(s => s.text).<span class="fn">join</span>(<span class="str">' '</span>);
+
+    <span class="kw">const</span> response = <span class="kw">await</span> anthropic.messages.<span class="fn">create</span>({
+      model: <span class="str">'claude-sonnet-4-20250514'</span>,
+      max_tokens: <span class="num">1000</span>,
+      system: <span class="str">"You are an expert academic note-taker. Given a lecture transcript segment for a specific slide, return valid JSON with: { summary: string, keyPoints: string[], flashcards: [{q, a}] }"</span>,
+      messages: [{ role: <span class="str">'user'</span>, content: `Slide: "${slide.title}"\n\nTranscript:\n${transcript}` }]
+    });
+
+    <span class="kw">return</span> JSON.<span class="fn">parse</span>(response.content[<span class="num">0</span>].text);
+  }));
+
+  <span class="kw">return</span> summaries;
+};
+    </div>
+  </div>
+</section>
+
+<!-- KEY DECISIONS -->
+<section class="section">
+  <div class="section-eyebrow">06 — Key Design Decisions</div>
+  <h2 class="section-title">Tradeoffs made<br><em>with intent</em></h2>
+
+  <div class="decision-grid">
+    <div class="decision-card">
+      <div class="decision-vs">Transcription Engine</div>
+      <div class="decision-chosen">✓ Deepgram (streaming)</div>
+      <div class="decision-rejected">OpenAI Whisper (batch)</div>
+      <div class="decision-reason">Whisper has higher accuracy on clean audio but requires a complete audio file to process. <strong>For live class use, streaming with slight accuracy tradeoff is always the right call.</strong> Students need the transcript while the lecture is happening, not 30 minutes after.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-vs">Slide Sync Method</div>
+      <div class="decision-chosen">✓ Manual student tap</div>
+      <div class="decision-rejected">Automatic screen detection</div>
+      <div class="decision-reason">Automatic slide detection via computer vision on a screen share is technically elegant but adds complexity and fails in rooms where the student can't see the projector clearly. <strong>Manual tap is 100% reliable and puts control in the student's hands — which is the whole product thesis.</strong></div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-vs">AI Summary Timing</div>
+      <div class="decision-chosen">✓ Post-session batch</div>
+      <div class="decision-rejected">Live in-class AI summaries</div>
+      <div class="decision-reason">Generating summaries during class feels fast but adds API cost and latency to the most critical flow (live transcription). <strong>Students don't read summaries in class — they read them after.</strong> Batching after the session is cheaper, faster, and doesn't compete with real-time transcription.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-vs">Data Model</div>
+      <div class="decision-chosen">✓ PostgreSQL (relational)</div>
+      <div class="decision-rejected">MongoDB (document)</div>
+      <div class="decision-reason">The core data has clear relationships: one session has many slides, each slide has many transcript segments. <strong>Relational joins make full-text search across a session trivial.</strong> A document store would require application-level joins and lose ACID guarantees on concurrent writes during live sessions.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="section" id="roadmap">
+  <div class="section-eyebrow">07 — Product Roadmap</div>
+  <h2 class="section-title">Three phases to<br><em>institutional adoption</em></h2>
+  <p class="section-lead">The roadmap is ordered by student impact, not technical complexity. Phase 1 delivers standalone value. Phase 2 adds institutional hooks. Phase 3 makes the product defensible.</p>
+
+  <div class="roadmap">
+    <div class="phase phase-1">
+      <div class="phase-tag">Phase 1 — MVP (Weeks 1–6)</div>
+      <div class="phase-title">The Core Loop</div>
+      <ul class="phase-items">
+        <li>Mic recording with live transcription</li>
+        <li>PDF/PPT slide upload + rendering</li>
+        <li>Manual slide-to-timestamp sync</li>
+        <li>Per-slide AI summary (post-session)</li>
+        <li>AI-generated flashcards</li>
+        <li>Session library / dashboard</li>
+        <li>PDF export of study notes</li>
+      </ul>
+    </div>
+    <div class="phase phase-2">
+      <div class="phase-tag">Phase 2 — Growth (Weeks 7–14)</div>
+      <div class="phase-title">Institutional Integration</div>
+      <ul class="phase-items">
+        <li>University SSO (Auth0 SAML)</li>
+        <li>Canvas/Blackboard LMS integration</li>
+        <li>Auto slide import from course portal</li>
+        <li>Accessibility Services admin portal</li>
+        <li>AI chat: "Ask about this lecture"</li>
+        <li>Multi-device sync (phone + laptop)</li>
+        <li>Spaced repetition flashcard queue</li>
+      </ul>
+    </div>
+    <div class="phase phase-3">
+      <div class="phase-tag">Phase 3 — Scale (Month 4+)</div>
+      <div class="phase-title">Network Effects</div>
+      <ul class="phase-items">
+        <li>Shared lecture libraries by course</li>
+        <li>Professor slide upload integration</li>
+        <li>Automatic slide detection (CV)</li>
+        <li>FERPA-compliant data controls</li>
+        <li>Analytics for Accessibility Services</li>
+        <li>Native iOS/Android app</li>
+        <li>Offline mode (on-device Whisper)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section class="section">
+  <div class="section-eyebrow">08 — Success Metrics</div>
+  <h2 class="section-title">How we measure<br><em>what matters</em></h2>
+  <p class="section-lead">We measure what the student actually experiences, not just what's easy to count. The north star metric is whether students feel more prepared for exams than before.</p>
+
+  <div class="metrics-row">
+    <div class="metric-box">
+      <div class="metric-num" style="color:var(--gold-dim)">D7</div>
+      <div class="metric-label">7-day retention target: 60%+<br><span style="font-size:11px">Did they come back to review?</span></div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-num">&lt;300ms</div>
+      <div class="metric-label">Live transcript latency target<br><span style="font-size:11px">Deepgram streaming benchmark</span></div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-num" style="color:var(--green)">4.5★</div>
+      <div class="metric-label">Target CSAT score<br><span style="font-size:11px">Post-exam survey</span></div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-num" style="color:var(--red)">0</div>
+      <div class="metric-label">FERPA incidents target<br><span style="font-size:11px">Audio data never shared</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><span>NoteSync</span> — Portfolio Case Study by a Product Manager & Full-Stack Engineer</p>
+  <p style="margin-top:8px;font-size:11px">Built with React · Deepgram · Claude API · Node.js · PostgreSQL</p>
+</footer>
+
+</body>
+</html>
